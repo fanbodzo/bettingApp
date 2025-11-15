@@ -1,0 +1,56 @@
+# ======================== #
+# General / IDE Settings   #
+# ======================== #
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# ======================== #
+# Java / Maven (Backend)   #
+# ======================== #
+backend/target/
+!backend/src/main/**/target/
+!backend/src/test/**/target/
+backend/pom.xml.tag
+backend/pom.xml.releaseBackup
+backend/pom.xml.versionsBackup
+backend/pom.xml.next
+backend/release.properties
+backend/dependency-reduced-pom.xml
+backend/build-log.txt
+backend/hs_err_pid*
+
+# ======================== #
+# Node / React (Frontend)  #
+# ======================== #
+# Dependencies
+frontend/node_modules/
+
+# Build output
+frontend/build/
+frontend/dist/
+
+# Logs
+**frontend/npm-debug.log***
+**frontend/yarn-error.log***
+**frontend/yarn-debug.log***
+
+# Environment variables
+**frontend/.env.local**
+**frontend/.env.development.local**
+**frontend/.env.test.local**
+**frontend/.env.production.local**
+
+# Test reports
+**frontend/coverage/**
+
+# Other
+frontend/.pnp
+frontend/.pnp.js
+
+# ======================== #
+# Secrets & Local Config   #
+# ======================== #
+# Ignore local properties file containing secrets for the backend
+backend/src/main/resources/application-local.properties
