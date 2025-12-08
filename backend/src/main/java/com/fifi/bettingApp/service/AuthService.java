@@ -1,10 +1,17 @@
 package com.fifi.bettingApp.service;
 
+import com.fifi.bettingApp.dto.AuthResponse;
+import com.fifi.bettingApp.dto.LoginRequest;
 import com.fifi.bettingApp.dto.RegisterRequest;
 import com.fifi.bettingApp.entity.User;
 import com.fifi.bettingApp.entity.enums.Role;
 import com.fifi.bettingApp.repository.UserRepository;
+import com.fifi.bettingApp.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +25,8 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
+    private final AuthenticationManager authenticationManager;
 
     //transactional robi wszystko w ramach jednej operacji bazodanowej jezlei cos sie niepoweidzie
     //to jest robiony rollback transakcji nie leci nic do bazy
@@ -47,6 +56,25 @@ public class AuthService {
                 .build();
         //zappisuje do bazy
         userRepository.save(user);
+    }
+
+    //metoda na login uzywam tutaj JwtUtils
+    @Transactional
+    public AuthResponse loginUser(LoginRequest loginRequest) {
+        //uwierzeytelenienie uzytkonika za pomoca AuthMenagera
+        //tutaj jest uzywany UserDetailsServiceImpl
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+        );
+        //ustwinie obiketu authenticationw securitycontext
+        //ozancza to ze uzytkonik jest zalogowany na czas tego zadania
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        //generacja tokenu z naszej klasy jwtUtils
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        //zwracamy tokenopakwany w DTO klassa authReponse
+        return new  AuthResponse(jwt);
     }
 
 }
