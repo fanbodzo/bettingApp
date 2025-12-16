@@ -12,7 +12,9 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class CouponServiceImpl implements CouponService {
     private final RedisTemplate<String, BetCouponDto> redisTemplate;
+    //do unikana jezlei bysmy w redisie chcieli przechowywac takze sesje uzytkonikow
     private static final String COUPON_KEY_PREFIX = "coupon:";
+    //TTL - time to live kuponu czyli 24h jakby bedzie aktywny w cache
     private static final Duration COUPON_TTL = Duration.ofHours(24);
 
     @Override
