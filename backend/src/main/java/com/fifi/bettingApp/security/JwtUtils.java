@@ -32,7 +32,7 @@ public class JwtUtils {
 
     //czas waznosci przepustki w milisekundach
     //samo @Value wstryzkuej nam wartosci z plikow
-    @Value("${app.jwt.expiration-ms}")
+    @Value("${app.jwt.expiration-ms}00")
     private int jwtExpirationMs;
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);

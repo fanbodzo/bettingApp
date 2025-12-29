@@ -1,18 +1,15 @@
 package com.fifi.bettingApp.dto;
 
-import lombok.AllArgsConstructor;
+import com.fifi.bettingApp.entity.enums.BetStatus;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class BetSelectionDto {
-    private Long oddId;
+@Builder
+public class BetHistorySelectionDto {
     private String eventName;
     private String marketName;
     private String outcomeName;
     private Double oddValue;
-    private Integer marketId;
+    private BetStatus status;
 }

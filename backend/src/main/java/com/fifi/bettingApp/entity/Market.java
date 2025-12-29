@@ -6,7 +6,8 @@ import lombok.*;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +17,7 @@ public class Market {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "market_id")
-    private Long marketId;
+    private Integer marketId;
 
     @Column(name = "market_name", nullable = false)
     private String marketName;

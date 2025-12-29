@@ -1,11 +1,12 @@
 package com.fifi.bettingApp.controller;
 
+import com.fifi.bettingApp.dto.BetHistoryDto;
 import com.fifi.bettingApp.dto.PlaceBetRequestDto;
-import com.fifi.bettingApp.entity.Bet;
 import com.fifi.bettingApp.service.BetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/bets")
@@ -18,5 +19,10 @@ public class BetController {
         betService.placeBet(userId, requestDto.getStake());
 
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<BetHistoryDto>> getUserBets(@PathVariable Long userId) {
+
+        return ResponseEntity.ok(betService.getUserBets(userId));
     }
 }

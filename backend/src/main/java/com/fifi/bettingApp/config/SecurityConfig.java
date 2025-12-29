@@ -5,6 +5,7 @@ import com.fifi.bettingApp.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,7 +37,9 @@ public class SecurityConfig {
                 //kazdy token ma dostep do podanych endpointow
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/users").permitAll()
-                .anyRequest().authenticated());
+                        //kazdy bez tokenu widzi mecze
+                        .requestMatchers(HttpMethod.GET, "/api/v1/events/**").permitAll()
+                        .anyRequest().authenticated());
         //wstawiamy walsnego straznika przed sprawdzniem loginu ihasla i wstawiam tam moj walsny authFilter
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 

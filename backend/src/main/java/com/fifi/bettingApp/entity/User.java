@@ -9,10 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-//adnotacje lombok
-//gerneruejmy przy uzyciu lomboka (narzedzie ktore pozwala nam unikac boilerplate code( powatarzyacy sie kod))
-//settery , gettery, toString() , equals() , hashCode()
-@Data
+
+@Getter
+@Setter
 
 /*udostepnnienie wzorca projektowego builder
     dziala to prosciutko , zamiast towrzyc powalony konstruktor

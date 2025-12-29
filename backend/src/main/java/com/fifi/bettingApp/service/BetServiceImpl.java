@@ -1,19 +1,19 @@
 package com.fifi.bettingApp.service;
 
 import com.fifi.bettingApp.dto.BetCouponDto;
+import com.fifi.bettingApp.dto.BetHistoryDto;
+import com.fifi.bettingApp.dto.BetHistorySelectionDto;
 import com.fifi.bettingApp.dto.BetSelectionDto;
-import com.fifi.bettingApp.entity.Bet;
-import com.fifi.bettingApp.entity.BetSelection;
-import com.fifi.bettingApp.entity.User;
+import com.fifi.bettingApp.entity.*;
 import com.fifi.bettingApp.entity.enums.BetStatus;
-import com.fifi.bettingApp.repository.BetRepository;
-import com.fifi.bettingApp.repository.BetSelectionRepository;
-import com.fifi.bettingApp.repository.UserRepository;
+import com.fifi.bettingApp.repository.*;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +23,8 @@ public class BetServiceImpl implements BetService {
     private final BetSelectionRepository betSelectionRepository;
     private final BetRepository betRepository;
     private final UserRepository userRepository;
+    private final OddRepository oddRepository;
+    private final MarketRepository marketRepository;
 
     @Override
     @Transactional
@@ -52,13 +54,22 @@ public class BetServiceImpl implements BetService {
 
         //zapisanie selekcji
         for (BetSelectionDto selectionDto : coupon.getSelections()) {
-            BetSelection newSelection = BetSelection.builder()
+
+            Odd odd = oddRepository.findById(selectionDto.getOddId())
+                    .orElseThrow(() -> new IllegalStateException("Kurs o ID " + selectionDto.getOddId() + " zniknął w trakcie obstawiania!"));
+
+            Market market = marketRepository.findById(selectionDto.getMarketId())
+                    .orElseThrow(() -> new IllegalStateException("Rynek o ID " + selectionDto.getMarketId() + " zniknął w trakcie obstawiania!"));
+
+            BetSelection betSelection = BetSelection.builder()
                     .bet(savedBet)
                     .oddValueAtBetTime(selectionDto.getOddValue())
                     .selectionStatus(BetStatus.PENDING)
+                    .odd(odd)
+                    .market(market)
                     .build();
 
-            betSelectionRepository.save(newSelection);
+            betSelectionRepository.save(betSelection);
         }
 
         double newBalance = user.getCashBalance() - stake;
@@ -68,4 +79,35 @@ public class BetServiceImpl implements BetService {
         couponService.clearCoupon(userId);
 
     };
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BetHistoryDto> getUserBets(Long userId) {
+        List<Bet> historyBets = betRepository.findByUserUserIdOrderByCreatedAtDesc(userId);
+
+        return historyBets.stream().map(this::mapToMyBetDto).collect(Collectors.toList());
+    }
+
+    private BetHistoryDto mapToMyBetDto(Bet bet) {
+        return BetHistoryDto.builder()
+                .betId(bet.getBetId())
+                .stake(bet.getStake())
+                .totalOdd(bet.getTotalOdd())
+                .potentialPayout(bet.getPotentialPayout())
+                .status(bet.getBetStatus())
+                .placedAt(bet.getCreatedAt())
+                .selections(bet.getSelections().stream()
+                        .map(this::mapToSelectionDto)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+    private BetHistorySelectionDto mapToSelectionDto(BetSelection selection) {
+        return BetHistorySelectionDto.builder()
+                .eventName(selection.getOdd().getMarket().getEvent().getEventName())
+                .marketName(selection.getOdd().getMarket().getMarketName())
+                .outcomeName(selection.getOdd().getOutcomeName())
+                .oddValue(selection.getOddValueAtBetTime())
+                .status(selection.getSelectionStatus())
+                .build();
+    }
 }

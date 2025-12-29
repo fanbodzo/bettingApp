@@ -3,11 +3,13 @@ package com.fifi.bettingApp.entity;
 import com.fifi.bettingApp.entity.enums.BetStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,6 +35,7 @@ public class Bet {
     @Column(name = "bet_status", nullable = false)
     private BetStatus betStatus;
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
