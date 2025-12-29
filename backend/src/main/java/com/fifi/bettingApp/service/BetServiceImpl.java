@@ -6,6 +6,7 @@ import com.fifi.bettingApp.dto.BetHistorySelectionDto;
 import com.fifi.bettingApp.dto.BetSelectionDto;
 import com.fifi.bettingApp.entity.*;
 import com.fifi.bettingApp.entity.enums.BetStatus;
+import com.fifi.bettingApp.entity.enums.TransactionType;
 import com.fifi.bettingApp.repository.*;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class BetServiceImpl implements BetService {
     private final UserRepository userRepository;
     private final OddRepository oddRepository;
     private final MarketRepository marketRepository;
+    private final TransactionRepository transactionRepository;
 
     @Override
     @Transactional
@@ -75,6 +77,16 @@ public class BetServiceImpl implements BetService {
         double newBalance = user.getCashBalance() - stake;
         user.setCashBalance(newBalance);
         userRepository.save(user);
+        //transakcja
+        Transaction transaction = Transaction.builder()
+                .user(user)
+                .transactionType(TransactionType.BET_PLACEMENT)
+                .amount(stake)
+                .relatedBet(savedBet)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        transactionRepository.save(transaction);
 
         couponService.clearCoupon(userId);
 
