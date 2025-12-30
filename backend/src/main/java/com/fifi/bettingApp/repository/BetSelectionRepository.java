@@ -4,6 +4,9 @@ import com.fifi.bettingApp.entity.BetSelection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface BetSelectionRepository extends JpaRepository<BetSelection, Long> {
+    List<BetSelection> findAllByMarket_MarketId(Long marketId);
 }

@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/users").permitAll()
                         //kazdy bez tokenu widzi mecze
                         .requestMatchers(HttpMethod.GET, "/api/v1/events/**").permitAll()
+                        //endpoint dla admina
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
         //wstawiamy walsnego straznika przed sprawdzniem loginu ihasla i wstawiam tam moj walsny authFilter
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
