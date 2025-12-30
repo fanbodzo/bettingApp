@@ -27,6 +27,16 @@ services:
     ports:
       - "6379:6379"
 
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: betting_rabbitmq
+    ports:
+      - "5672:5672"   # Port AMQP do komunikacji dla aplikacji
+      - "15672:15672" # Port HTTP dla panelu zarządzania w przeglądarce
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
 volumes:
   postgres-data:
     driver: local
